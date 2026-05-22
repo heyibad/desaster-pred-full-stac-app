@@ -18,7 +18,9 @@ frontend_origins = [
     "http://127.0.0.1:5173",
 ]
 if frontend_env:
-    frontend_origins.extend([origin.strip() for origin in frontend_env.split(",") if origin.strip()])
+    frontend_origins.extend(
+        [origin.strip() for origin in frontend_env.split(",") if origin.strip()]
+    )
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,7 +33,10 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup() -> None:
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        print(f"Warning: Database initialization failed at startup: {e}")
 
 
 @app.get("/")
